@@ -30,6 +30,9 @@
     "typed"
   ],
   "license": "MIT",
+  "np": {
+		"2fa": false
+	},
   "bugs": {
     "url": "https://github.com/tom2strobl/orderbysort/issues"
   },
