@@ -1,0 +1,45 @@
+{
+  "name": "order-by-sort",
+  "version": "0.1.0",
+  "description": "Takes an array of objects and sorts them by an arbitrary number of common string or number fields with control over direction and placement of null elements.",
+  "main": "src/index.ts",
+  "author": {
+    "name": "Thomas Strobl",
+    "email": "thomas@thomas-strobl.com",
+    "url": "https://thomas-strobl.com"
+  },
+  "scripts": {
+    "build": "babel --presets @babel/preset-typescript src/index.ts --out-dir lib --extensions \".ts\"",
+    "test": "jest --config jest.json --coverage"
+  },
+  "files": [
+    "src/index.ts",
+    "lib/index.js",
+    "min/index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tom2strobl/orderbysort.git"
+  },
+  "keywords": [
+    "postgres",
+    "pg",
+    "hasura",
+    "graphql",
+    "typescript",
+    "typed"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tom2strobl/orderbysort/issues"
+  },
+  "homepage": "https://github.com/tom2strobl/orderbysort#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.13.10",
+    "@babel/core": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
+    "@babel/preset-typescript": "^7.13.0",
+    "babel-jest": "^26.6.3",
+    "jest": "^26.6.3"
+  }
+}
