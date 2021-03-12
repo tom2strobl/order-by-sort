@@ -1,6 +1,6 @@
 {
   "name": "order-by-sort",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Takes an array of objects and sorts them by an arbitrary number of common string or number fields with control over direction and placement of null elements.",
   "main": "src/index.ts",
   "author": {
@@ -31,8 +31,8 @@
   ],
   "license": "MIT",
   "np": {
-		"2fa": false
-	},
+    "2fa": false
+  },
   "bugs": {
     "url": "https://github.com/tom2strobl/orderbysort/issues"
   },
