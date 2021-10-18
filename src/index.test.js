@@ -65,6 +65,28 @@ test('sorts number asc_nulls_first and then stringdate desc_nulls_last', () => {
   expect(sortedArray).toEqual(expectedSortedArray)
 })
 
+test('sorts rating asc_nulls_first, then date desc_nulls_last, lastly id asc_nulls_last', () => {
+  const orderByArray = [
+    { field: 'rating', value: 'asc_nulls_first' },
+    { field: 'date', value: 'desc_nulls_last' },
+    { field: 'id', value: 'asc_nulls_last' }
+  ]
+  const entityArrayWithDates = entityArray.map(({ date, ...rest }) => {
+    return { ...rest, date: new Date(date)}
+  })
+  const sortedArray = orderBySort(entityArrayWithDates, orderByArray)
+  const expectedSortedArray = [
+    { id: 5, rating: null, author: 'Wilma', date: new Date('2021-01-02') },
+    { id: 3, rating: null, author: 'Frank', date: new Date('2021-01-01') },
+    { id: 6, rating: null, author: null, date: new Date('2021-01-01') },
+    { id: 7, rating: null, author: null, date: new Date('2021-01-01') },
+    { id: 1, rating: 1, author: 'Paul', date: new Date('2021-01-03') },
+    { id: 4, rating: 3, author: 'Paul', date: new Date('2021-01-03') },
+    { id: 2, rating: 3, author: 'Anne', date: new Date('2021-01-01') }
+  ]
+  expect(sortedArray).toEqual(expectedSortedArray)
+})
+
 test('throw on missing field', () => {
   const orderByArray = [
     { field: 'reader', value: 'asc_nulls_last' }
@@ -80,7 +102,7 @@ test('throw on invalid field type', () => {
   const orderByArray = [
     { field: 'rating', value: 'asc_nulls_last' }
   ]
-  expect(() => orderBySort(malformedEntityArray, orderByArray)).toThrow(`Field ${orderByArray[0].field} is of invalid type, only string and number are allowed`)
+  expect(() => orderBySort(malformedEntityArray, orderByArray)).toThrow(`Field ${orderByArray[0].field} is of invalid type, only string, number and date are allowed`)
 })
 
 test('throw on invalid order operator', () => {
@@ -89,4 +111,3 @@ test('throw on invalid order operator', () => {
   ]
   expect(() => orderBySort(entityArray, orderByArray)).toThrow(`${orderByArray[0].value} is an invalid OrderOperator`)
 })
-

@@ -1,4 +1,5 @@
-export type OrderBySortItem = Record<string, unknown>
+export type FieldInputValue = Date | string | number
+export type OrderBySortItem = Record<string, FieldInputValue>
 export type OrderBySortDirection = 'asc' | 'desc'
 export type OrderBySortNullPosition = 'first' | 'last'
 export type OrderBySortOrderOperator =
@@ -64,9 +65,35 @@ const compare = (
   }
 }
 
+/**
+ * date checks whether the parameter was not a falsy value (undefined, null, 0, "", etc..)
+  - Object.prototype.toString.call(date) returns a native string representation of the given object type - In our case "[object Date]". Because date.toString() overrides its parent method, we need to .call or .apply the method from Object.prototype directly which ..
+  - Bypasses user-defined object type with the same constructor name (e.g.: "Date")
+  - Works across different JS contexts (e.g. iframes) in contrast to instanceof or Date.prototype.isPrototypeOf.
+  - !isNaN(date) finally checks whether the value was not an Invalid Date.
+  - date instanceof Date at the end is then a type guard for type validity futher down the code
+ *
+ * @param {*} date
+ * @returns
+ */
+function isDate(date) {
+  return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date) && date instanceof Date;
+}
+
 // just a little safety check so we don't compare things we can't compare like functions
 const isValidField = (field: unknown) => {
-  return field === null || ['string', 'number'].includes(typeof field)
+  return field === null || ['string', 'number'].includes(typeof field) || isDate(field)
+}
+
+// normalizes field values for comparison (eg. converts dates into numbers)
+const normalizeField = (field: FieldInputValue) => {
+  let normalizedField: string | number
+  if (field instanceof Date) {
+    normalizedField = field.getTime()
+  } else {
+    normalizedField = field
+  }
+  return normalizedField
 }
 
 /**
@@ -83,12 +110,12 @@ const determineResult = (a: OrderBySortItem, b: OrderBySortItem, orderEntry: Ord
   }
   if (!isValidField(a[orderEntry.field]) || !isValidField(b[orderEntry.field])) {
     throw new Error(
-      `Field ${orderEntry.field} is of invalid type, only string and number are allowed`
+      `Field ${orderEntry.field} is of invalid type, only string, number and date are allowed`
     )
   }
-  // we can safely type cast since we guarded
-  const fieldA = a[orderEntry.field] as string | number
-  const fieldB = b[orderEntry.field] as string | number
+  // normalize fields for comparison
+  const fieldA = normalizeField(a[orderEntry.field])
+  const fieldB = normalizeField(b[orderEntry.field])
   if (orderEntry.value === 'asc' || orderEntry.value === 'asc_nulls_last') {
     return compare(fieldA, fieldB, 'asc', 'last')
   } else if (orderEntry.value === 'asc_nulls_first') {

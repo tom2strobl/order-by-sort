@@ -1,4 +1,5 @@
-export declare type OrderBySortItem = Record<string, unknown>;
+export declare type FieldInputValue = Date | string | number;
+export declare type OrderBySortItem = Record<string, FieldInputValue>;
 export declare type OrderBySortDirection = 'asc' | 'desc';
 export declare type OrderBySortNullPosition = 'first' | 'last';
 export declare type OrderBySortOrderOperator = 'asc' | 'asc_nulls_first' | 'asc_nulls_last' | 'desc' | 'desc_nulls_first' | 'desc_nulls_last';

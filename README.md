@@ -6,7 +6,7 @@ Particularly useful for emulating behaviour of postgres sorting and accepts Post
 
 - *zero* dependencies
 - *fully typed* in typescript
-- *100%* code test *coverage* (100% Statements 37/37 100% Branches 47/47 100% Functions 6/6 100% Lines 37/37)
+- *100%* code test *coverage* (100% Statements 43/43, 100% Branches 54/54, 100% Functions 8/8, 100% Lines 43/43)
 - *small* footprint (1.2kb minified)
 - leverages vanilla arr.sort to benefit from improving browser implementations
 - written in an actually readable way
@@ -45,9 +45,9 @@ sortedArray is now [
 */
 ```
 
-`entityArray` OrderBySortItem[] — Array of Objects with common string or number fields to sort by.
+`entityArray` OrderBySortItem[] — Array of Objects with common string, number or Date fields to sort by.
 `orderByArray` OrderByEntry[] — Array of objects with ordering definitions in pairs of field/value where value is a valid `OrderBySortOrderOperator`
 
 See `src/index.test.js` for more examples and `src/index.ts` for types.
 
-Disclaimer: Performance is not yet tested for ridiculously large datasets. But feel free to do so and let me know.
+In terms of performance the above example runs at `308 572 ops/s, ±0.28%`, but as a disclaimer: Performance is not yet tested for ridiculously large datasets. But feel free to do so and let me know.
