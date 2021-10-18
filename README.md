@@ -1,8 +1,8 @@
 # order-by-sort
 
-> Takes an array of objects and sorts them by an arbitrary number of common `string` or `number` fields with control over direction and placement of `null` elements. Apart from the given fields it retains original order (stable sort). The original array will not be modified.
+> Takes an array of objects and sorts them by an arbitrary number of common `string`, `number` or `Date` fields with control over direction and placement of `null` elements. Apart from the given fields it retains original order (stable sort). The original array will not be modified.
 
-Particularly useful for emulating behaviour of postgres sorting and accepts PostgreSQL compliant ORDER BY options ('asc', 'asc_nulls_first', 'asc_nulls_last', 'desc', 'desc_nulls_first', 'desc_nulls_last'). Which eg. is something you could want if you want to supply correct ordering after mutations in optimistic UI updates on the client before a server responds. Order by options are also 1:1 the one's Hasura uses in their GraphQL schemas.
+Particularly useful for emulating behaviour of postgres sorting and accepts PostgreSQL compliant `ORDER BY` options (`'asc', 'asc_nulls_first', 'asc_nulls_last', 'desc', 'desc_nulls_first', 'desc_nulls_last'`). Which eg. is something you could want if you want to supply correct ordering after mutations in optimistic UI updates on the client before a server responds. Order by options are also 1:1 the one's Hasura uses in their GraphQL schemas.
 
 - *zero* dependencies
 - *fully typed* in typescript
