@@ -1,8 +1,8 @@
 export declare type FieldInputValue = Date | string | number;
-export declare type OrderBySortItem = Record<string, FieldInputValue>;
-export declare type OrderBySortDirection = 'asc' | 'desc';
-export declare type OrderBySortNullPosition = 'first' | 'last';
-export declare type OrderBySortOrderOperator = 'asc' | 'asc_nulls_first' | 'asc_nulls_last' | 'desc' | 'desc_nulls_first' | 'desc_nulls_last';
+export declare type OrderBySortItem = Record<string, unknown>;
+export declare type OrderBySortDirection = "asc" | "desc";
+export declare type OrderBySortNullPosition = "first" | "last";
+export declare type OrderBySortOrderOperator = "asc" | "asc_nulls_first" | "asc_nulls_last" | "desc" | "desc_nulls_first" | "desc_nulls_last";
 export interface OrderByEntry {
     field: string;
     value: OrderBySortOrderOperator;
@@ -15,4 +15,4 @@ export interface OrderByEntry {
  * @param {OrderByEntry[]} orderArray Array of conditions how to sort eg. [{ field: 'author', value: 'asc_nulls_first' }]
  * @returns
  */
-export declare function orderBySort(arr: OrderBySortItem[], orderArray: OrderByEntry[]): OrderBySortItem[];
+export declare function orderBySort<T extends OrderBySortItem[]>(arr: T, orderArray: OrderByEntry[]): T;

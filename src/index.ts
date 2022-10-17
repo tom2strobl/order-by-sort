@@ -1,28 +1,29 @@
-export type FieldInputValue = Date | string | number
-export type OrderBySortItem = Record<string, FieldInputValue>
-export type OrderBySortDirection = 'asc' | 'desc'
-export type OrderBySortNullPosition = 'first' | 'last'
+export type FieldInputValue = Date | string | number;
+export type OrderBySortItem = Record<string, unknown>;
+export type OrderBySortDirection = "asc" | "desc";
+export type OrderBySortNullPosition = "first" | "last";
 export type OrderBySortOrderOperator =
-  | 'asc'
-  | 'asc_nulls_first'
-  | 'asc_nulls_last'
-  | 'desc'
-  | 'desc_nulls_first'
-  | 'desc_nulls_last'
+  | "asc"
+  | "asc_nulls_first"
+  | "asc_nulls_last"
+  | "desc"
+  | "desc_nulls_first"
+  | "desc_nulls_last";
+
 type OrderBySortFunction = (
   a: OrderBySortItem,
   b: OrderBySortItem,
   remainingOrderArray: OrderByEntry[]
-) => 0 | 1 | -1 | OrderBySortFunction
+) => 0 | 1 | -1 | OrderBySortFunction;
 
 export interface OrderByEntry {
-  field: string
-  value: OrderBySortOrderOperator
+  field: string;
+  value: OrderBySortOrderOperator;
 }
 
 // type guard
 function isNumber(x: unknown): x is number {
-  return typeof x === 'number'
+  return typeof x === "number";
 }
 
 /**
@@ -41,29 +42,29 @@ const compare = (
 ) => {
   // equal items sort equally
   if (a === b) {
-    return 0
+    return 0;
   }
   // nulls sort before or after anything else
   else if (a === null) {
-    return nullPosition === 'first' ? -1 : 1
+    return nullPosition === "first" ? -1 : 1;
   } else if (b === null) {
-    return nullPosition === 'first' ? 1 : -1
+    return nullPosition === "first" ? 1 : -1;
   }
   // otherwise we sort, depending on direction
   else {
     // in both directions we want to clean values
-    const cleanedA: number | string = isNumber(a) ? a * 1 : a.toLowerCase() // restore numbers
-    const cleanedB: number | string = isNumber(b) ? b * 1 : b.toLowerCase()
+    const cleanedA: number | string = isNumber(a) ? a * 1 : a.toLowerCase(); // restore numbers
+    const cleanedB: number | string = isNumber(b) ? b * 1 : b.toLowerCase();
     // otherwise, if we're ascending, lowest sorts first
-    if (direction === 'asc') {
-      return cleanedA < cleanedB ? -1 : 1
+    if (direction === "asc") {
+      return cleanedA < cleanedB ? -1 : 1;
     }
     // if descending, highest sorts first
     else {
-      return cleanedA < cleanedB ? 1 : -1
+      return cleanedA < cleanedB ? 1 : -1;
     }
   }
-}
+};
 
 /**
  * date checks whether the parameter was not a falsy value (undefined, null, 0, "", etc..)
@@ -77,24 +78,33 @@ const compare = (
  * @returns
  */
 function isDate(date) {
-  return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date) && date instanceof Date;
+  return (
+    date &&
+    Object.prototype.toString.call(date) === "[object Date]" &&
+    !isNaN(date) &&
+    date instanceof Date
+  );
 }
 
 // just a little safety check so we don't compare things we can't compare like functions
 const isValidField = (field: unknown) => {
-  return field === null || ['string', 'number'].includes(typeof field) || isDate(field)
-}
+  return (
+    field === null ||
+    ["string", "number"].includes(typeof field) ||
+    isDate(field)
+  );
+};
 
 // normalizes field values for comparison (eg. converts dates into numbers)
 const normalizeField = (field: FieldInputValue) => {
-  let normalizedField: string | number
+  let normalizedField: string | number;
   if (field instanceof Date) {
-    normalizedField = field.getTime()
+    normalizedField = field.getTime();
   } else {
-    normalizedField = field
+    normalizedField = field;
   }
-  return normalizedField
-}
+  return normalizedField;
+};
 
 /**
  * Helper function to make different comparisons more readable
@@ -103,30 +113,43 @@ const normalizeField = (field: FieldInputValue) => {
  * @param orderEntry Item of the orderArray with ordering conditions
  * @returns sortNumber 0 | 1 | -1, as expected by the vanilla arr.sort function
  */
-const determineResult = (a: OrderBySortItem, b: OrderBySortItem, orderEntry: OrderByEntry) => {
+const determineResult = (
+  a: OrderBySortItem,
+  b: OrderBySortItem,
+  orderEntry: OrderByEntry
+) => {
   // doing object keys approach to capture falsey values like null
-  if (!Object.keys(a).includes(orderEntry.field) || !Object.keys(b).includes(orderEntry.field)) {
-    throw new Error(`Object in array is missing field ${orderEntry.field}`)
+  if (
+    !Object.keys(a).includes(orderEntry.field) ||
+    !Object.keys(b).includes(orderEntry.field)
+  ) {
+    throw new Error(`Object in array is missing field ${orderEntry.field}`);
   }
-  if (!isValidField(a[orderEntry.field]) || !isValidField(b[orderEntry.field])) {
+  if (
+    !isValidField(a[orderEntry.field]) ||
+    !isValidField(b[orderEntry.field])
+  ) {
     throw new Error(
       `Field ${orderEntry.field} is of invalid type, only string, number and date are allowed`
-    )
+    );
   }
-  // normalize fields for comparison
-  const fieldA = normalizeField(a[orderEntry.field])
-  const fieldB = normalizeField(b[orderEntry.field])
-  if (orderEntry.value === 'asc' || orderEntry.value === 'asc_nulls_last') {
-    return compare(fieldA, fieldB, 'asc', 'last')
-  } else if (orderEntry.value === 'asc_nulls_first') {
-    return compare(fieldA, fieldB, 'asc', 'first')
-  } else if (orderEntry.value === 'desc' || orderEntry.value === 'desc_nulls_first') {
-    return compare(fieldA, fieldB, 'desc', 'first')
-  } else if (orderEntry.value === 'desc_nulls_last') {
-    return compare(fieldA, fieldB, 'desc', 'last')
+  // normalize fields for comparison. note: We type cast, since we know that the fields are valid from above
+  const fieldA = normalizeField(a[orderEntry.field] as FieldInputValue);
+  const fieldB = normalizeField(b[orderEntry.field] as FieldInputValue);
+  if (orderEntry.value === "asc" || orderEntry.value === "asc_nulls_last") {
+    return compare(fieldA, fieldB, "asc", "last");
+  } else if (orderEntry.value === "asc_nulls_first") {
+    return compare(fieldA, fieldB, "asc", "first");
+  } else if (
+    orderEntry.value === "desc" ||
+    orderEntry.value === "desc_nulls_first"
+  ) {
+    return compare(fieldA, fieldB, "desc", "first");
+  } else if (orderEntry.value === "desc_nulls_last") {
+    return compare(fieldA, fieldB, "desc", "last");
   }
-  throw new Error(`${orderEntry.value} is an invalid OrderOperator`)
-}
+  throw new Error(`${orderEntry.value} is an invalid OrderOperator`);
+};
 
 /**
  * Takes an array of objects and sorts them by an arbitrary number of common string or number fields with control over direction and placement of null elements.
@@ -136,17 +159,26 @@ const determineResult = (a: OrderBySortItem, b: OrderBySortItem, orderEntry: Ord
  * @param {OrderByEntry[]} orderArray Array of conditions how to sort eg. [{ field: 'author', value: 'asc_nulls_first' }]
  * @returns
  */
-export function orderBySort(arr: OrderBySortItem[], orderArray: OrderByEntry[]) {
+export function orderBySort<T extends OrderBySortItem[]>(
+  arr: T,
+  orderArray: OrderByEntry[]
+): T {
   // sort mutates the array, so we copy it to avoid side effects
-  const arrCopy = [...arr]
-  const sort: OrderBySortFunction = (a, b, remainingOrderArray = orderArray) => {
+  const arrCopy = [...arr];
+  const sort: OrderBySortFunction = (
+    a,
+    b,
+    remainingOrderArray = orderArray
+  ) => {
     // calculate the compare value of the first(=next) item to compare with
-    const compareValue = determineResult(a, b, remainingOrderArray[0])
+    const compareValue = determineResult(a, b, remainingOrderArray[0]);
     // See if the next key needs to be considered
-    const checkNextKey = compareValue === 0 && remainingOrderArray.length !== 1
+    const checkNextKey = compareValue === 0 && remainingOrderArray.length !== 1;
     // Return compare value (potential recursion)
-    return checkNextKey ? sort(a, b, remainingOrderArray.slice(1)) : compareValue
-  }
+    return checkNextKey
+      ? sort(a, b, remainingOrderArray.slice(1))
+      : compareValue;
+  };
   // @ts-expect-error we're kinda overloading the sort function to make it recursive, so the mismatch is fine
-  return arrCopy.sort(sort)
+  return arrCopy.sort(sort);
 }
