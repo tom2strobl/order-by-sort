@@ -1,6 +1,6 @@
 {
   "name": "order-by-sort",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Takes an array of objects and sorts them by an arbitrary number of common string or number fields with control over direction and placement of null elements.",
   "main": "lib/index.js",
   "author": {
